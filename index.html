@@ -1,0 +1,660 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PrepCMS — Social Media Strategy</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap');
+
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+
+:root{
+  --bg:#0d1117;
+  --surface:#161b22;
+  --border:#21262d;
+  --text:#e6edf3;
+  --text-secondary:#8b949e;
+  --accent:#3fb950;
+  --accent-dim:#238636;
+  --blue:#58a6ff;
+  --orange:#d29922;
+  --red:#f85149;
+  --font:'DM Sans',system-ui,sans-serif;
+  --mono:'DM Mono',monospace;
+  --slide-pad:clamp(1.5rem,5vw,4rem);
+}
+
+html{font-size:16px;-webkit-text-size-adjust:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.6;
+  overflow:hidden;
+  height:100dvh;
+  width:100vw;
+}
+
+/* ---- SLIDE CONTAINER ---- */
+.deck{position:relative;height:100dvh;width:100vw;overflow:hidden}
+
+.slide{
+  position:absolute;inset:0;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:var(--slide-pad);
+  padding-bottom:calc(var(--slide-pad) + 3.5rem);
+  opacity:0;
+  transform:translateX(40px);
+  pointer-events:none;
+  transition:opacity .4s ease,transform .4s ease;
+  overflow-y:auto;
+  -webkit-overflow-scrolling:touch;
+}
+.slide.active{opacity:1;transform:translateX(0);pointer-events:all}
+.slide.prev{opacity:0;transform:translateX(-40px)}
+
+.slide-inner{
+  max-width:720px;
+  width:100%;
+  margin:0 auto;
+}
+
+/* ---- TYPOGRAPHY ---- */
+h1{
+  font-size:clamp(1.75rem,4.5vw,2.75rem);
+  font-weight:700;
+  letter-spacing:-.02em;
+  line-height:1.15;
+  margin-bottom:1.25rem;
+}
+h2{
+  font-size:clamp(1.1rem,2.5vw,1.35rem);
+  font-weight:600;
+  color:var(--blue);
+  margin-bottom:.75rem;
+  letter-spacing:-.01em;
+}
+h3{
+  font-size:1rem;
+  font-weight:600;
+  color:var(--accent);
+  margin-bottom:.5rem;
+  text-transform:uppercase;
+  letter-spacing:.06em;
+  font-size:.8rem;
+}
+p{
+  color:var(--text-secondary);
+  margin-bottom:.75rem;
+  font-size:clamp(.9rem,2vw,1.05rem);
+  line-height:1.65;
+}
+p strong,p b{color:var(--text);font-weight:600}
+.highlight{color:var(--accent);font-weight:600}
+.warn{color:var(--orange);font-weight:600}
+.dim{color:var(--text-secondary);font-size:.85rem}
+
+/* ---- COVER ---- */
+.cover{justify-content:flex-end;padding-bottom:clamp(3rem,8vh,6rem)}
+.cover .label{
+  display:inline-block;
+  font-family:var(--mono);
+  font-size:.7rem;
+  letter-spacing:.1em;
+  text-transform:uppercase;
+  color:var(--accent);
+  border:1px solid var(--accent-dim);
+  padding:.25rem .6rem;
+  border-radius:3px;
+  margin-bottom:1rem;
+}
+.cover h1{font-size:clamp(2rem,6vw,3.5rem);margin-bottom:.5rem}
+.cover .subtitle{
+  font-size:clamp(1rem,2.5vw,1.25rem);
+  color:var(--text-secondary);
+  margin-bottom:2rem;
+  font-weight:300;
+}
+.cover .meta{
+  font-size:.8rem;
+  color:var(--text-secondary);
+  opacity:.6;
+  line-height:1.8;
+}
+
+/* ---- CARDS ---- */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(200px,1fr));
+  gap:.75rem;
+  margin:.75rem 0;
+}
+.card{
+  background:var(--surface);
+  border:1px solid var(--border);
+  border-radius:8px;
+  padding:1rem 1.1rem;
+}
+.card h4{font-size:.85rem;font-weight:600;margin-bottom:.35rem;color:var(--text)}
+.card p{font-size:.8rem;margin-bottom:0;line-height:1.5}
+.card .num{
+  font-family:var(--mono);
+  font-size:1.4rem;
+  font-weight:700;
+  color:var(--accent);
+  display:block;
+  margin-bottom:.25rem;
+}
+
+/* ---- LISTS ---- */
+ul.clean{list-style:none;padding:0;margin:.5rem 0}
+ul.clean li{
+  position:relative;
+  padding-left:1.25rem;
+  margin-bottom:.6rem;
+  font-size:clamp(.85rem,1.8vw,.95rem);
+  color:var(--text-secondary);
+  line-height:1.55;
+}
+ul.clean li::before{
+  content:'';
+  position:absolute;
+  left:0;top:.55em;
+  width:6px;height:6px;
+  border-radius:50%;
+  background:var(--accent);
+}
+ul.clean li strong{color:var(--text)}
+
+/* ---- TABLE ---- */
+.tbl{
+  width:100%;
+  border-collapse:collapse;
+  margin:.75rem 0;
+  font-size:clamp(.75rem,1.6vw,.85rem);
+}
+.tbl th,.tbl td{
+  text-align:left;
+  padding:.5rem .6rem;
+  border-bottom:1px solid var(--border);
+  vertical-align:top;
+}
+.tbl th{
+  color:var(--text-secondary);
+  font-weight:500;
+  font-size:.7rem;
+  text-transform:uppercase;
+  letter-spacing:.05em;
+}
+.tbl td{color:var(--text)}
+.tbl tr:last-child td{border-bottom:none}
+
+/* ---- SEGMENT TAGS ---- */
+.tag{
+  display:inline-block;
+  font-size:.65rem;
+  font-family:var(--mono);
+  padding:.15rem .45rem;
+  border-radius:3px;
+  font-weight:500;
+  text-transform:uppercase;
+  letter-spacing:.04em;
+}
+.tag-green{background:rgba(63,185,80,.15);color:var(--accent)}
+.tag-blue{background:rgba(88,166,255,.15);color:var(--blue)}
+.tag-orange{background:rgba(210,153,34,.15);color:var(--orange)}
+.tag-red{background:rgba(248,81,73,.15);color:var(--red)}
+
+/* ---- QUOTE ---- */
+.quote{
+  border-left:3px solid var(--accent);
+  padding:.75rem 1rem;
+  margin:1rem 0;
+  background:rgba(63,185,80,.05);
+  border-radius:0 6px 6px 0;
+}
+.quote p{color:var(--text);margin:0;font-style:italic;font-size:.95rem}
+
+/* ---- DIVIDER ---- */
+hr{border:none;border-top:1px solid var(--border);margin:1.25rem 0}
+
+/* ---- CONTROLS ---- */
+.controls{
+  position:fixed;
+  bottom:0;left:0;right:0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  padding:.6rem var(--slide-pad);
+  background:rgba(13,17,23,.92);
+  backdrop-filter:blur(12px);
+  -webkit-backdrop-filter:blur(12px);
+  border-top:1px solid var(--border);
+  z-index:100;
+}
+.controls button{
+  background:var(--surface);
+  border:1px solid var(--border);
+  color:var(--text);
+  font-family:var(--font);
+  font-size:.8rem;
+  font-weight:500;
+  padding:.45rem 1rem;
+  border-radius:6px;
+  cursor:pointer;
+  transition:all .15s;
+  touch-action:manipulation;
+  min-width:70px;
+}
+.controls button:hover{background:var(--border);border-color:var(--text-secondary)}
+.controls button:disabled{opacity:.25;cursor:default;background:var(--surface)}
+.progress{
+  font-family:var(--mono);
+  font-size:.7rem;
+  color:var(--text-secondary);
+  letter-spacing:.04em;
+}
+.progress-bar{
+  position:fixed;
+  top:0;left:0;
+  height:2px;
+  background:var(--accent);
+  transition:width .35s ease;
+  z-index:101;
+}
+
+/* ---- RESPONSIVE ---- */
+@media(max-width:600px){
+  .card-grid{grid-template-columns:1fr}
+  .tbl{font-size:.72rem}
+  .tbl th,.tbl td{padding:.4rem .35rem}
+  .controls button{padding:.4rem .7rem;font-size:.75rem;min-width:55px}
+}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<div class="deck" id="deck">
+
+<!-- ======== SLIDE 0: COVER ======== -->
+<div class="slide cover active" data-i="0">
+<div class="slide-inner">
+  <div class="label">April 2026 — Month 1 Launch</div>
+  <h1>PrepCMS<br>Social Media Strategy</h1>
+  <p class="subtitle">Building the definitive UPSC CMS brand on Instagram, YouTube & Reddit.</p>
+  <div class="meta">
+    Prepared for <strong>Nabil</strong> — Content & Social Media Executive<br>
+    CytoStack Private Limited — Confidential
+  </div>
+</div>
+</div>
+
+<!-- ======== SLIDE 1: THE OPPORTUNITY ======== -->
+<div class="slide" data-i="1">
+<div class="slide-inner">
+  <h3>The Opportunity</h3>
+  <h1>Nobody is talking to CMS aspirants.</h1>
+  <p>UPSC CMS 2026: <strong>1,358 vacancies</strong>. <strong>3 lakh+ registrations</strong>. Exam on <strong>August 2, 2026</strong>.</p>
+  <p>PrepLadder, Marrow, DAMS — every major player treats CMS as an afterthought to NEET PG. There is <b>no dedicated CMS social media presence</b> in India.</p>
+  <div class="quote"><p>PrepCMS wins by being the first brand to treat CMS aspirants as a distinct audience — not as NEET PG also-rans.</p></div>
+  <p>You are building something that doesn't exist yet. That's the advantage.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 2: WHO IS THE CMS ASPIRANT ======== -->
+<div class="slide" data-i="2">
+<div class="slide-inner">
+  <h3>Target Audience</h3>
+  <h1>Four types of people give CMS.</h1>
+  <div class="card-grid">
+    <div class="card">
+      <h4><span class="tag tag-green">40%</span> The Pragmatist</h4>
+      <p>Wants a secure government job right after MBBS. Values stability, pension, gazetted rank. CMS is their <strong>primary target</strong>.</p>
+    </div>
+    <div class="card">
+      <h4><span class="tag tag-blue">35%</span> The Hedge Bettor</h4>
+      <p>Preparing for NEET PG primarily. Gives CMS as a safety net. Needs to see <strong>CMS-specific strategy</strong> to engage.</p>
+    </div>
+    <div class="card">
+      <h4><span class="tag tag-orange">15%</span> The Disillusioned</h4>
+      <p>Failed NEET PG 1–3 times. Burned out. CMS represents an <strong>exit with dignity</strong>. Respond to hope, not pressure.</p>
+    </div>
+    <div class="card">
+      <h4><span class="tag tag-red">10%</span> The Pivoter</h4>
+      <p>Working in private hospitals. Wants to switch to government for stability and autonomy. <strong>Older, less time</strong> to study.</p>
+    </div>
+  </div>
+  <p class="dim" style="margin-top:.75rem">Every piece of content should speak to at least one of these groups. Know who you're talking to before you script.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 3: FEARS & DESIRES ======== -->
+<div class="slide" data-i="3">
+<div class="slide-inner">
+  <h3>Audience Psychology</h3>
+  <h1>What they fear. What they want.</h1>
+  <table class="tbl">
+    <thead><tr><th>Fear (content must address)</th><th>Desire (content must fulfill)</th></tr></thead>
+    <tbody>
+      <tr><td>"Am I wasting time on CMS?"</td><td>Clear, efficient study plan</td></tr>
+      <tr><td>"There's no dedicated CMS material"</td><td>MCQ practice mapped to CMS pattern</td></tr>
+      <tr><td>"Is the job actually worth it?"</td><td>Real stories from serving officers</td></tr>
+      <tr><td>"Cutoffs keep rising"</td><td>Data-driven readiness scoring</td></tr>
+      <tr><td>"I can't afford another subscription"</td><td>Affordable, no video-lecture bloat</td></tr>
+      <tr><td>"What if I get a bad posting?"</td><td>Insider info: cadre, career growth, reality</td></tr>
+    </tbody>
+  </table>
+  <p class="dim">Our content doesn't sell a product — it answers these fears with evidence.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 4: PLATFORM SPLIT ======== -->
+<div class="slide" data-i="4">
+<div class="slide-inner">
+  <h3>Platform Strategy</h3>
+  <h1>Instagram first. Everything else follows.</h1>
+  <div class="card-grid">
+    <div class="card">
+      <span class="num">70%</span>
+      <h4>Instagram</h4>
+      <p>Primary growth engine. 5–6 Reels/week + 2–3 carousels. Target: <strong>500 followers, 50+ posts</strong> in April.</p>
+    </div>
+    <div class="card">
+      <span class="num">20%</span>
+      <h4>YouTube</h4>
+      <p>Evergreen authority. 4–6 long-form videos. CMS officer interviews + strategy masterclasses.</p>
+    </div>
+    <div class="card">
+      <span class="num">10%</span>
+      <h4>Reddit</h4>
+      <p>Community trust. Value-first, no selling. Build karma in r/indianmedschool and r/UPSC.</p>
+    </div>
+  </div>
+  <hr>
+  <p><strong>Every Reel goes to YouTube Shorts within 24 hours.</strong> Same content, double distribution. No TikTok watermarks.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 5: CONTENT PILLARS ======== -->
+<div class="slide" data-i="5">
+<div class="slide-inner">
+  <h3>Content Pillars</h3>
+  <h1>Five categories. Every post maps to one.</h1>
+  <table class="tbl">
+    <thead><tr><th>Pillar</th><th>%</th><th>Purpose</th><th>Examples</th></tr></thead>
+    <tbody>
+      <tr><td><strong>Exam Strategy</strong></td><td>30%</td><td>Authority, conversion</td><td>PYQ analysis, cutoff data, study plans</td></tr>
+      <tr><td><strong>Officer Life</strong></td><td>25%</td><td>Aspiration, trust</td><td>Interviews, day-in-life, salary breakdowns</td></tr>
+      <tr><td><strong>CMS vs NEET PG</strong></td><td>15%</td><td>Differentiation, reach</td><td>Contrarian takes, comparisons</td></tr>
+      <tr><td><strong>Product Showcase</strong></td><td>15%</td><td>Conversion</td><td>App demos, AI readiness, mock previews</td></tr>
+      <tr><td><strong>Motivation</strong></td><td>15%</td><td>Shareability, virality</td><td>Transformation stories, identity content</td></tr>
+    </tbody>
+  </table>
+  <p class="dim"><span class="warn">No daily quiz posts.</span> They generate low saves, low shares, and content fatigue. Every post must be worth saving or sharing.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 6: WHAT WORKS ======== -->
+<div class="slide" data-i="6">
+<div class="slide-inner">
+  <h3>Evidence-Based Content</h3>
+  <h1>Content types that perform.</h1>
+  <ul class="clean">
+    <li><strong>CMS Officer Interviews</strong> — 60–90s reel excerpts. One quote per clip. Highest share rate. <span class="highlight">Priority #1 content.</span></li>
+    <li><strong>PYQ Pattern Carousels</strong> — 6–8 slides, one stat per slide. High save rate (reference value).</li>
+    <li><strong>"Stop Doing This" Reels</strong> — Attack common mistakes. Contrarian = debate = algorithmic boost.</li>
+    <li><strong>Salary & Benefits Carousels</strong> — Perennially searched, perennially shared. 8–10 slides.</li>
+    <li><strong>Dr. Farhan Podcast Clips</strong> — 45–60s face-to-camera. Builds personal + brand authority.</li>
+    <li><strong>App Feature Demos</strong> — Screen recordings with voiceover. Max 2/week. Quick and punchy.</li>
+    <li><strong>Countdown Content</strong> — "X days left. Here's what to do this week." Weekly cadence.</li>
+    <li><strong>Relatable Memes</strong> — With trending audio. Max 1–2/week. Must be genuinely funny.</li>
+  </ul>
+</div>
+</div>
+
+<!-- ======== SLIDE 7: THE HOOK ======== -->
+<div class="slide" data-i="7">
+<div class="slide-inner">
+  <h3>Hooks</h3>
+  <h1>You have 2 seconds. Make them count.</h1>
+  <p>Reels with <strong>>60% 3-second hold rate</strong> get 5–10x more reach. The hook is the entire strategy.</p>
+  <hr>
+  <table class="tbl">
+    <thead><tr><th>Type</th><th>Hook Script (first 2–3 seconds)</th></tr></thead>
+    <tbody>
+      <tr><td>Curiosity</td><td>"Nobody's telling CMS aspirants this — and it changes everything."</td></tr>
+      <tr><td>Myth Buster</td><td>"You DON'T need 100 hours of video lectures for CMS."</td></tr>
+      <tr><td>Data Shock</td><td>"60–75% of CMS questions repeat from previously tested concepts."</td></tr>
+      <tr><td>Identity</td><td>"You're preparing for the wrong exam. CMS is NOT NEET PG."</td></tr>
+      <tr><td>Aspiration</td><td>"Class I Gazetted Officer. Pension for life. Starting salary ₹80,000+."</td></tr>
+      <tr><td>Empathy</td><td>"You've attempted NEET PG twice. Your confidence is shattered. I get it."</td></tr>
+      <tr><td>Urgency</td><td>"121 days until UPSC CMS 2026. Here's your week-by-week plan."</td></tr>
+      <tr><td>Contrarian</td><td>"CMS is harder than NEET PG. And I can prove it with data."</td></tr>
+    </tbody>
+  </table>
+  <p class="dim">End every Reel with: <strong>"Save this"</strong> (drives saves) or <strong>"Send to a friend preparing for CMS"</strong> (drives shares). Never say "like and follow."</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 8: SAMPLE SCRIPT ======== -->
+<div class="slide" data-i="8">
+<div class="slide-inner">
+  <h3>Script Template</h3>
+  <h1>30-second Reel structure.</h1>
+  <p class="dim">Reel: "Why CMS is the Smartest Move for MBBS Graduates in 2026"</p>
+  <hr>
+  <p><span class="tag tag-green">0–3s HOOK</span></p>
+  <p><strong>"Every MBBS graduate in India is fighting for a PG seat. But there's a path nobody talks about."</strong></p>
+  <p class="dim">↳ Walking shot, face to camera, urgent pace.</p>
+  <br>
+  <p><span class="tag tag-blue">3–10s PROBLEM</span></p>
+  <p><strong>"NEET PG: 2 lakh seats, 3 lakh aspirants, 40% don't get clinical branches."</strong></p>
+  <p class="dim">↳ Quick text overlays with stats.</p>
+  <br>
+  <p><span class="tag tag-orange">10–20s SOLUTION</span></p>
+  <p><strong>"UPSC CMS: 1,358 vacancies. Gazetted rank. ₹56,100 basic + DA + NPA. Pension."</strong></p>
+  <p class="dim">↳ Salary breakdown graphic, government hospital B-roll.</p>
+  <br>
+  <p><span class="tag tag-red">20–30s CTA</span></p>
+  <p><strong>"PrepCMS — the only platform built for this exam. Link in bio."</strong></p>
+  <p class="dim">↳ Quick app demo, 3 screens, end card @prepcms.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 9: WEEK 1 CALENDAR ======== -->
+<div class="slide" data-i="9">
+<div class="slide-inner">
+  <h3>April Calendar</h3>
+  <h1>Week 1: Launch (Apr 8–14)</h1>
+  <p class="dim">April 6–7: Orientation. Read strategy doc, set up accounts, batch-create first 3 days of content.</p>
+  <hr>
+  <table class="tbl">
+    <thead><tr><th>Date</th><th>Format</th><th>Content</th></tr></thead>
+    <tbody>
+      <tr><td>Apr 8</td><td>Reel + Carousel</td><td>Launch: "Nobody's talking about the biggest opportunity in Indian medicine" + CMS 2026 overview</td></tr>
+      <tr><td>Apr 9</td><td>Reel + Story</td><td>"1,358 vacancies — here's what that means" + Poll: "Are you preparing for CMS?"</td></tr>
+      <tr><td>Apr 10</td><td>Reel + Carousel</td><td>"CMS is NOT NEET PG" (contrarian) + data comparison</td></tr>
+      <tr><td>Apr 11</td><td>Reel</td><td>"What does a CMS Medical Officer actually earn?"</td></tr>
+      <tr><td>Apr 12</td><td>Reel + Story</td><td>"You have 4 months — here's the plan" + exam countdown</td></tr>
+      <tr><td>Apr 13</td><td>Carousel</td><td>CMS cutoff trends 2014–2025 (data visualization)</td></tr>
+      <tr><td>Apr 14</td><td>Reel</td><td>"Class I Gazetted Officer from Day 1"</td></tr>
+    </tbody>
+  </table>
+</div>
+</div>
+
+<!-- ======== SLIDE 10: WEEK 2-3 ======== -->
+<div class="slide" data-i="10">
+<div class="slide-inner">
+  <h3>April Calendar</h3>
+  <h1>Weeks 2–3: Authority & Community</h1>
+  <h2>Week 2: Data, Not Opinions (Apr 15–21)</h2>
+  <ul class="clean">
+    <li>PYQ proof reel: "60–75% of CMS questions repeat"</li>
+    <li>Subject weightage carousel (7 slides)</li>
+    <li>"Stop watching 100 hours of video — start solving" reel</li>
+    <li>Product demo: AI readiness score screen recording</li>
+    <li>CMS officer interview teaser + <strong>full interview on YouTube</strong></li>
+    <li>Relatable meme: "POV: You tell family you're giving CMS"</li>
+  </ul>
+  <h2 style="margin-top:1rem">Week 3: The Officer's Path (Apr 22–28)</h2>
+  <ul class="clean">
+    <li>Government quarters / pension / work-life balance reel</li>
+    <li>Career path carousel: GDMO → Director of Health Services</li>
+    <li>High-yield PSM concept reel</li>
+    <li>Mock exam screen recording reel</li>
+    <li><strong>YouTube: "CMS vs NEET PG" — Dr. Farhan on camera</strong></li>
+    <li>Transformation story: "I failed NEET PG twice. CMS changed my life."</li>
+  </ul>
+</div>
+</div>
+
+<!-- ======== SLIDE 11: GROWTH TACTICS ======== -->
+<div class="slide" data-i="11">
+<div class="slide-inner">
+  <h3>Growth</h3>
+  <h1>No paid ads in Month 1. Pure organic.</h1>
+  <ul class="clean">
+    <li><strong>Comment on competitor posts</strong> — PrepLadder, Marrow, DAMS pages. Add genuine value on CMS questions. Builds visibility.</li>
+    <li><strong>DM outreach</strong> — When someone posts about CMS prep, DM: "Saw you're preparing for CMS — we're building something for CMS aspirants, would love feedback." 10–15/day.</li>
+    <li><strong>Telegram groups</strong> — Join 10–20 CMS groups. Share content (not links) as helpful resources. The @prepcms watermark does the work.</li>
+    <li><strong>Micro-influencer collabs</strong> — 5–10 creators with 1K–10K followers. Free PrepCMS access for a story mention. Target: 2–3 in April.</li>
+    <li><strong>Reddit value posts</strong> — Comprehensive, non-promotional text posts with real PYQ data. Mention PrepCMS once at the end. Build trust.</li>
+  </ul>
+  <hr>
+  <p><strong>Engagement rule:</strong> Reply to every comment within <span class="highlight">1 hour</span> of posting. First-hour velocity determines algorithmic push.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 12: KPIS ======== -->
+<div class="slide" data-i="12">
+<div class="slide-inner">
+  <h3>Measurement</h3>
+  <h1>April targets.</h1>
+  <div class="card-grid" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+    <div class="card"><span class="num">500</span><p>Instagram followers</p></div>
+    <div class="card"><span class="num">50+</span><p>Feed posts published</p></div>
+    <div class="card"><span class="num">>15</span><p>Avg. saves per post</p></div>
+    <div class="card"><span class="num">>10</span><p>Avg. shares per post</p></div>
+    <div class="card"><span class="num">>50%</span><p>Reel 3-sec hold rate</p></div>
+    <div class="card"><span class="num">4–6</span><p>YouTube videos</p></div>
+    <div class="card"><span class="num">>200</span><p>Website clicks from IG</p></div>
+    <div class="card"><span class="num">>50</span><p>Free trial sign-ups from social</p></div>
+  </div>
+  <hr>
+  <p><strong>Weekly report every Monday:</strong> Top 3 posts, bottom 3 posts, saves/shares ratio, follower growth, content plan for the week.</p>
+  <p class="dim">We measure <strong>saves and shares</strong>, not likes. Saves = reference value. Shares = social proof. Likes mean nothing.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 13: DR FARHAN'S ROLE ======== -->
+<div class="slide" data-i="13">
+<div class="slide-inner">
+  <h3>Collaboration</h3>
+  <h1>What I will provide.</h1>
+  <ul class="clean">
+    <li><strong>On-camera for YouTube</strong> — CMS officer interviews (as interviewer), "CMS vs NEET PG" opinion piece, 4-month strategy masterclass, monthly "State of CMS" updates.</li>
+    <li><strong>CMS officer contacts</strong> — I will reach out to the CGHS Wellness Center and Railway Hospital in Ernakulam for interview subjects.</li>
+    <li><strong>Clinical authority</strong> — Any medical content, strategy advice, or clinical accuracy review goes through me.</li>
+    <li><strong>Content review</strong> — I review scripts and posts before publish. Daily submissions, reviewed same day.</li>
+    <li><strong>Product access</strong> — Full admin access to PrepCMS for screen recordings, walkthroughs, and content creation.</li>
+  </ul>
+  <hr>
+  <p><strong>What I need from you:</strong> Execution. Consistency. Creative energy. You own the accounts. You own the output. I provide direction and clinical credibility.</p>
+</div>
+</div>
+
+<!-- ======== SLIDE 14: FIRST WEEK ======== -->
+<div class="slide" data-i="14">
+<div class="slide-inner">
+  <h3>Your First 48 Hours</h3>
+  <h1>April 6–7: Setup.</h1>
+  <h2>Day 1 — April 6</h2>
+  <ul class="clean">
+    <li>Read the full strategy document (provided separately)</li>
+    <li>Set up Instagram business account: @prepcms</li>
+    <li>Go through every feature in PrepCMS — take a mock exam, explore PYQs, use the library</li>
+    <li>Study competitor pages: PrepLadder, Marrow Instagram</li>
+  </ul>
+  <h2 style="margin-top:1rem">Day 2 — April 7</h2>
+  <ul class="clean">
+    <li>Set up YouTube channel with banner and description</li>
+    <li>Create Reddit account, start browsing target subreddits</li>
+    <li>Design 5 Instagram highlight covers</li>
+    <li>Batch-create first 3 days of content (April 8–10)</li>
+    <li>Build brand asset kit: logo, colors, fonts from prepcms.com</li>
+  </ul>
+  <div class="quote"><p>Publishing starts April 8. No exceptions.</p></div>
+</div>
+</div>
+
+<!-- ======== SLIDE 15: CLOSE ======== -->
+<div class="slide cover" data-i="15">
+<div class="slide-inner">
+  <h3>One More Thing</h3>
+  <h1>We're building something that doesn't exist yet.</h1>
+  <p>There is no dedicated CMS content creator. No CMS community. No CMS brand on Instagram. We are first. That's the entire strategy — <strong>own the conversation before anyone else shows up.</strong></p>
+  <hr>
+  <p class="dim" style="margin-top:1.5rem">
+    Full strategy document: <strong>PrepCMS_Social_Media_Strategy_April_2026.docx</strong><br>
+    Questions → Dr. Farhan<br><br>
+    Welcome to CytoStack. Let's build.
+  </p>
+</div>
+</div>
+
+</div><!-- /deck -->
+
+<!-- ---- CONTROLS ---- -->
+<div class="controls">
+  <button id="btnPrev" disabled>← Prev</button>
+  <span class="progress"><span id="curr">1</span> / <span id="total"></span></span>
+  <button id="btnNext">Next →</button>
+</div>
+
+<script>
+(function(){
+  const slides=document.querySelectorAll('.slide');
+  const total=slides.length;
+  let cur=0;
+
+  document.getElementById('total').textContent=total;
+
+  function go(n){
+    if(n<0||n>=total||n===cur)return;
+    const goingForward=n>cur;
+    slides.forEach(s=>s.classList.remove('active','prev'));
+    if(goingForward)slides[cur].classList.add('prev');
+    cur=n;
+    slides[cur].classList.add('active');
+    slides[cur].scrollTop=0;
+    document.getElementById('curr').textContent=cur+1;
+    document.getElementById('btnPrev').disabled=cur===0;
+    document.getElementById('btnNext').disabled=cur===total-1;
+    document.getElementById('progressBar').style.width=((cur+1)/total*100)+'%';
+  }
+
+  document.getElementById('btnPrev').onclick=()=>go(cur-1);
+  document.getElementById('btnNext').onclick=()=>go(cur+1);
+
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight'||e.key===' ')go(cur+1);
+    if(e.key==='ArrowLeft')go(cur-1);
+  });
+
+  let tx=0;
+  document.addEventListener('touchstart',e=>{tx=e.changedTouches[0].screenX},{passive:true});
+  document.addEventListener('touchend',e=>{
+    const dx=e.changedTouches[0].screenX-tx;
+    if(Math.abs(dx)>50){dx<0?go(cur+1):go(cur-1)}
+  },{passive:true});
+
+  go(0);
+})();
+</script>
+
+</body>
+</html>
